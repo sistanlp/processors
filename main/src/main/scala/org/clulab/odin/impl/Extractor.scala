@@ -16,10 +16,10 @@ trait Extractor {
 
   def findAllIn(sent: Int, doc: Document, state: State): Seq[Mention]
 
-  def findAllIn(doc: Document, state: State): Seq[Mention] = for {
+  def findAllIn(doc: Document, state: State): Seq[Mention] = Debugger.debugExtractor(this) { for {
     i <- 0 until doc.sentences.size
     m <- findAllIn(i, doc, state)
-  } yield m
+  } yield m }
 
   protected def newTextBoundMention(interval: Interval, sent: Int, doc: Document): TextBoundMention =
     new TextBoundMention(labels, interval, sent, doc, keep, name)
@@ -40,7 +40,7 @@ class TokenExtractor(
     val pattern: TokenPattern
 ) extends Extractor {
 
-  def findAllIn(sent: Int, doc: Document, state: State): Seq[Mention] = Debugger.debug(TokenExtractorFrame(this)) {
+  def findAllIn(sent: Int, doc: Document, state: State): Seq[Mention] = Debugger.debugSentence(sent, doc.sentences(sent)) {
     val results = pattern.findAllIn(sent, doc, state)
     val mentions = for (r <- results) yield mkMention(r, sent, doc)
     action(mentions, state)
@@ -107,7 +107,7 @@ class GraphExtractor(
     val config: OdinConfig
 ) extends Extractor {
 
-  def findAllIn(sent: Int, doc: Document, state: State): Seq[Mention] = Debugger.debug {
+  def findAllIn(sent: Int, doc: Document, state: State): Seq[Mention] = Debugger.debugSentence(sent, doc.sentences(sent)) {
     val mentions = pattern.getMentions(sent, doc, state, labels, keep, name)
     action(mentions, state)
   }
@@ -135,7 +135,7 @@ class CrossSentenceExtractor(
     throw OdinException(s"cross-sentence pattern for '$name' must have window > 0 either to the left or to the right")
   }
 
-  def findAllIn(sent: Int, doc: Document, state: State): Seq[Mention] = Debugger.debug {
+  def findAllIn(sent: Int, doc: Document, state: State): Seq[Mention] = Debugger.debugSentence(sent, doc.sentences(sent)) {
 
     def getMentionsWithLabel(m: Mention): Seq[Mention] = {
       state.mentionsFor(m.sentence, m.tokenInterval).filter{ mention =>

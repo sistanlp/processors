@@ -187,7 +187,7 @@ class ProgramFragment(val in: Inst, val out: List[Inst]) {
     * Calling this invalidates the ProgramFragment because
     * the `out` sequence is no longer up to date.
     */
-  def setOut(inst: Inst): Unit = out.foreach(_.next = inst)
+  def setOut(inst: Inst): Unit = out.foreach(_.setNext(inst))
 
   private def copy(): ProgramFragment = ProgramFragment(in.deepcopy())
 
@@ -195,10 +195,10 @@ class ProgramFragment(val in: Inst, val out: List[Inst]) {
     for (i <- 0 until n) yield copy()
 
   def capture(name: String): ProgramFragment = {
-    val start = SaveStart(name)
+    // make SaveStart -> in, outs -> SaveEnd
+    val start = SaveStart(name, in)
     val end = SaveEnd(name)
-    start.next = in
-    setOut(end)
+    setOut(end) // for all out, _.setNext(end)
     ProgramFragment(start, end)
   }
 
@@ -313,8 +313,8 @@ object ProgramFragment {
         case i :: rest => i match {
           case i if seen contains i => traverse(rest, seen, out)
           case i @ Split(lhs, rhs) => traverse(lhs :: rhs :: rest, seen + i, out)
-          case i if i.next == null => traverse(rest, seen + i, i :: out)
-          case i => traverse(i.next :: rest, seen + i, out)
+          case i if i.getNext == null => traverse(rest, seen + i, i :: out)
+          case i => traverse(i.getNext :: rest, seen + i, out)
         }
       }
     traverse(List(inst), Set.empty, Nil)

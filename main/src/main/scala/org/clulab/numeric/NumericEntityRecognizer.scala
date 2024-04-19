@@ -40,7 +40,12 @@ class NumericEntityRecognizer protected (val lexiconNer: LexiconNER, val actions
     * @param doc Input document
     * @return sets in place the sequence of NER labels and sequence of NER norms (using the TempEval-2 notation)
     */
-  def extractFrom(doc:Document): Seq[Mention] = {
+
+  // TODO: KWA Skip this for now because it runs through the debugging code, confusing things.
+  // Possibly make sure the debugger is off when this gets run.
+  def extractFrom(doc: Document): Seq[Mention] = Seq.empty
+
+  def extractFromOrig(doc:Document): Seq[Mention] = {
     // dictionaries
     val originalEntities = matchLexiconNer(doc)
     // grammars

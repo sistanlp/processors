@@ -46,12 +46,17 @@ trait StringMatcherParsers extends RegexParsers {
 
 sealed trait StringMatcher {
   def matches(s: String): Boolean
+
 }
 
 class ExactStringMatcher(string: String) extends StringMatcher {
   def matches(s: String): Boolean = string == s
+
+  override def toString: String = s"$string"
 }
 
 class RegexStringMatcher(regex: Regex) extends StringMatcher {
   def matches(s: String): Boolean = regex.findFirstIn(s).nonEmpty
+
+  override def toString: String = s"the regex to match: $regex"
 }

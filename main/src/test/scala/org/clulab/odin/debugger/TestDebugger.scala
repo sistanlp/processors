@@ -50,9 +50,7 @@ class TestDebugger extends Test {
       |      "roots":[2]}}}]}
       |""".stripMargin
     val document = JSONSerializer.toDocument(JsonMethods.parse(json))
-    val mentions = odin.extractFrom(document)
-
-    mentions should not be empty
+    val mentions = odin.extractFrom(document) // mentions should not be empty
 
     Debugger.showDeepest() // This should turn up something.
   }

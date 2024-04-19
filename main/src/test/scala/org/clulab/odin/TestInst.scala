@@ -39,7 +39,7 @@ class TestInst extends Test {
   }
 
   it should "distinguish SaveStart and SaveEnd" in {
-    val saveStart = SaveStart("Hello")
+    val saveStart = SaveStart("Hello", Done)
     val saveEnd = SaveEnd("Hello")
 
     // These will match, but == should not.
@@ -66,8 +66,8 @@ class TestInst extends Test {
     hash1a should be (hash2a)
     inst1 should be (inst2)
 
-    inst1.posId = 27 // This makes hash codes different.
-    inst2.posId = 29
+    inst1.setPosId(27) // This makes hash codes different.
+    inst2.setPosId(29)
 
     val hash1b = inst1.##
     val hash2b = inst2.##
@@ -78,11 +78,11 @@ class TestInst extends Test {
 
   it should "distinguish between MatchToken and MatchToken" in {
     val inst1 = MatchToken(TokenWildcard)
-    inst1.posId = 27 // This makes hash codes different.
+    inst1.setPosId(27) // This makes hash codes different.
     val hash1 = inst1.##
 
     val inst2 = MatchToken(TokenWildcard)
-    inst2.posId = 29
+    inst2.setPosId(29)
     val hash2 = inst2.##
 
     hash1 should not be (hash2)
@@ -108,7 +108,7 @@ class TestInst extends Test {
       // (Done, false), // This won't work because it is an object!
       (Pass(), false),
       (Split(MatchSentenceStart(), MatchSentenceEnd()), true),
-      (SaveStart("hello"), false),
+      (SaveStart("hello", null), false),
       (SaveEnd("goodbye"), false),
       (MatchToken(TokenWildcard), false),
       (MatchMention(new ExactStringMatcher("string"), None, None), false),
@@ -123,23 +123,23 @@ class TestInst extends Test {
         {
           val duplicate = inst.dup()
 
-          duplicate.next should be (null)
+          duplicate.getNext should be (null)
         }
         {
           val deepcopy = inst.deepcopy()
 
-          deepcopy.next should be (null)
+          deepcopy.getNext should be (null)
         }
         {
-          inst.next = Pass()
+          inst.setNext(Pass())
           val duplicate = inst.dup()
 
-          duplicate.next should be (null)
+          duplicate.getNext should be (null)
         }
         {
           val deepcopy = inst.deepcopy()
 
-          deepcopy.next should not be (null)
+          deepcopy.getNext should not be (null)
         }
       }
     }
@@ -148,22 +148,22 @@ class TestInst extends Test {
   it should "distinguish complicated instances" in {
     val inst0 = {
       val inst = MatchToken(TokenWildcard)
-      inst.next = {
+      inst.setNext {
         val inst = Split(
           {
             val inst = MatchToken(TokenWildcard)
-            inst.next = {
+            inst.setNext {
               val inst = MatchToken(new WordConstraint(new RegexStringMatcher("Accepted|^FAO$".r)))
-              inst.next = Done
+              inst.setNext(Done)
               inst
             }
             inst
           },
           {
             val inst = new Pass
-            inst.next = {
+            inst.setNext {
               val inst = MatchToken(new WordConstraint(new RegexStringMatcher("Accepted|^FAO$".r)))
-              inst.next = Done
+              inst.setNext(Done)
               inst
             }
             inst
@@ -175,9 +175,9 @@ class TestInst extends Test {
     }
     val inst1 = {
       val inst = MatchToken(TokenWildcard)
-      inst.next = {
+      inst.setNext {
         val inst = MatchToken(new WordConstraint(new RegexStringMatcher("Accepted|^FAO$".r)))
-        inst.next = Done
+        inst.setNext(Done)
         inst
       }
       inst
@@ -188,11 +188,11 @@ class TestInst extends Test {
     val inst1Hash = inst1.##
 
     // These are different.
-    val inst0HashNext = inst0.next.##
-    val inst1HashNext = inst1.next.##
+    val inst0HashNext = inst0.getNext.##
+    val inst1HashNext = inst1.getNext.##
 
     val equiv = inst0 == inst1 // true
-    val equivNext = inst0.next == inst1.next // false
+    val equivNext = inst0.getNext == inst1.getNext // false
     inst0 should be (inst1) // We are not comparing recursively.
   }
 

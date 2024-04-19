@@ -23,7 +23,9 @@ class ExtractorEngine(val extractors: Vector[Extractor], val globalAction: Actio
    *  @param doc a processor's document
    *  @return a sequence of mentions extracted from the document
    */
-  def extractFrom(doc: Document): Seq[Mention] = extractFrom(doc, new State)
+  def extractFrom(doc: Document): Seq[Mention] = Debugger.debugDoc(this, doc) {
+    extractFrom(doc, new State)
+  }
 
   /** Extract mentions from a document.
    *
@@ -39,7 +41,7 @@ class ExtractorEngine(val extractors: Vector[Extractor], val globalAction: Actio
       case mentions => loop(i + 1, state.updated(mentions))
     }
 
-    def extract(i: Int, state: State): Seq[Mention] = {
+    def extract(i: Int, state: State): Seq[Mention] = Debugger.debugLoop(i) {
       // extract mentions using extractors (each extractor applies its own action)
       val extractedMentions = for {
         extractor <- extractors

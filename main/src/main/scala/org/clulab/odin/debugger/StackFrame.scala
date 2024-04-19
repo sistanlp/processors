@@ -1,10 +1,20 @@
 package org.clulab.odin.debugger
-
+import org.clulab.utils.Timer
 import org.clulab.odin.impl.{TokenExtractor, TokenPattern}
 
-class StackFrame(sourceCode: SourceCode) {
+class StackFrame(val sourceCode: SourceCode) {
 
   override def toString: String = s"${getClass.getName}\t$sourceCode"
+
+  val execTime = new Timer("Execution Time") // Nick Avalani
+  execTime.start()
+
+
+  //Stop the timer
+  def stopTimer(): Long = {
+    execTime.stop()
+    execTime.elapsedTime
+  }
 }
 
 class SpecialFrame(message: String, sourceCode: SourceCode) extends StackFrame(sourceCode) {
