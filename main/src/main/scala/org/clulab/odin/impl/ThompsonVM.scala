@@ -6,7 +6,7 @@ import org.clulab.odin._
 import org.clulab.odin.debugger.Debugger
 import org.clulab.odin.impl.ThompsonVM.{PartialMatch, SingleThread, matchTokens}
 
-import scala.collection.mutable.HashMap
+import java.util.{IdentityHashMap => JIdentityHashMap}
 
 object ThompsonVM {
   type NamedGroups = Map[String, Seq[Interval]]
@@ -14,7 +14,7 @@ object ThompsonVM {
   // A PartialGroup is the name and the start of a group, without the end.
   type PartialGroups = List[(String, Int)]
   type PartialMatches = List[PartialMatch]
-  val matchTokens = new HashMap[String, Int]
+  val matchTokens = new JIdentityHashMap[Inst, List[Int]]()
 
   case class PartialMatch(
                            sentenceId: Int,
@@ -134,7 +134,10 @@ object ThompsonVM {
             val nextTok = if (t.dir == LeftToRight) t.tok + 1 else t.tok - 1
             val token = t.tok
             val const = i.c
-            matchTokens(const.toString) = token
+            if (matchTokens.containsKey(i))
+              matchTokens.put(i, token :: matchTokens.get(i))
+            else
+              matchTokens.put(i, List(token))
             println(s"Match mentions in singlestepthread is $matchTokens")
             mkThreads(nextTok, i.getNext, t.dir, t.groups, t.mentions, t.partialGroups)
           }
@@ -436,9 +439,12 @@ case class MatchToken(c: TokenConstraint) extends Inst {
 
 
   def visualize(sentence: String): String = {
-    if(matchTokens.contains(c.toString)) {
-      val token: Int = matchTokens(c.toString)
-      val words: String = (sentence.split(" ")(token))
+    if (matchTokens.containsKey(this)) {
+      val tokens: List[Int] = matchTokens.get(this)
+      // TODO: Also print out the token values for when there are multiple
+      // instances of the words that need to be distinguished.
+      // Also sort and deduplicate the values.
+      val words: String = tokens.map { token => sentence.split(" ")(token) }.mkString(", ")
       s"$posId. MatchToken($c matches $words)" + visualizeNext
     }
     else{

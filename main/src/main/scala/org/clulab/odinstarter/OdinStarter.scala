@@ -303,6 +303,7 @@ object OdinStarter extends App {
 
 
       case lookAhead: MatchLookAhead =>
+        println(" " * indent + lookAhead.visualize(sentence))
 
         if (!loopsOrDeadEnds(lookAhead.start))
 
@@ -310,6 +311,7 @@ object OdinStarter extends App {
 
 
       case lookBehind: MatchLookBehind =>
+        println(" " * indent + lookBehind.visualize(sentence))
 
         if (!loopsOrDeadEnds(lookBehind.start))
 
