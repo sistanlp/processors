@@ -50,6 +50,12 @@ class TokenPattern(val start: Inst) {
           // only if posId hasn't been set
           head.posId = id
           assigner(id + 1, head.lhs :: head.rhs :: tail)
+        case (head: MatchLookAhead) :: tail if head.posId == 0 =>
+          head.posId = id
+          assigner(id + 1, head.start :: head.next :: tail)
+        case (head: MatchLookBehind) :: tail if head.posId == 0 =>
+          head.posId = id
+          assigner(id + 1, head.start :: head.next :: tail)
         case head :: tail if head.posId == 0 =>
           // only if posId hasn't been set
           head.posId = id
