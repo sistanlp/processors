@@ -16,9 +16,9 @@ class NumericActions(seasonNormalizer: SeasonNormalizer, unitNormalizer: UnitNor
   /** Converts a sequence of mentions to new types given the converter function */
   private def convert(mentions: Seq[Mention], converter: Mention => Mention, converterName: String): Seq[Mention] = {
     val convertedMentions = new ArrayBuffer[Mention]()
-    for(m <- mentions) {
+    for (m <- mentions) {
       try {
-        convertedMentions += converter(m )
+        convertedMentions += converter(m)
       } catch {
         case e: Exception =>
           // sometimes these conversions fail, mainly on broken texts

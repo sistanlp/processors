@@ -27,7 +27,7 @@ rules:
       # numbers 10-19
       (ten | eleven | twelve | dozen | thirteen | fourteen | fifteen | sixteen | seventeen | eighteen | nineteen |
       # or numbers 20-99
-      twenty @WordDigit? | thirty @WordDigit? | fourty @WordDigit? | fifty @WordDigit? |
+      twenty @WordDigit? | thirty @WordDigit? | forty @WordDigit? | fifty @WordDigit? |
       sixty @WordDigit? | seventy @WordDigit? | eighty @WordDigit? | ninety @WordDigit? |
       "twenty-one" | "twenty-two" | "twenty-three" | "twenty-four" | "twenty-five" | "twenty-six" | "twenty-seven" | "twenty-eight" | "twenty-nine" |
       "thirty-one" | "thirty-two" | "thirty-three" | "thirty-four" | "thirty-five" | "thirty-six" | "thirty-seven" | "thirty-eight" | "thirty-nine" |
@@ -91,7 +91,7 @@ rules:
       # numbers 10-19
       ten | eleven | twelve | dozen | thirteen | fourteen | fifteen | sixteen | seventeen | eighteen | nineteen |
       # or numbers 20-99
-      twenty @WordDigit? | thirty @WordDigit? | fourty @WordDigit? | fifty @WordDigit? |
+      twenty @WordDigit? | thirty @WordDigit? | forty @WordDigit? | fifty @WordDigit? |
       sixty @WordDigit? | seventy @WordDigit? | eighty @WordDigit? | ninety @WordDigit? |
       "twenty-one" | "twenty-two" | "twenty-three" | "twenty-four" | "twenty-five" | "twenty-six" | "twenty-seven" | "twenty-eight" | "twenty-nine" |
       "thirty-one" | "thirty-two" | "thirty-three" | "thirty-four" | "thirty-five" | "thirty-six" | "thirty-seven" | "thirty-eight" | "thirty-nine" |
