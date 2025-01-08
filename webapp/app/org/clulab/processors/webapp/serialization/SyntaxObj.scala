@@ -2,6 +2,7 @@ package org.clulab.processors.webapp.serialization
 
 import org.clulab.processors.Document
 import org.clulab.processors.Sentence
+import org.clulab.struct.DirectedGraph
 import play.api.libs.json.JsObject
 import play.api.libs.json.Json
 
@@ -39,7 +40,7 @@ class SyntaxObj(val doc: Document, val text: String) {
 
     val rels = doc.sentences.flatMap { sent =>
       var relId = 0
-      val deps = sent.dependencies.get // lets assume that dependencies are always available
+      val deps = sent.dependencies.getOrElse(new DirectedGraph[String](List.empty)) // Let's not assume that dependencies are always available
       val rels = for {
         governor <- deps.outgoingEdges.indices
         (dependent, label) <- deps.outgoingEdges(governor)

@@ -27,7 +27,7 @@ class ParseObj(doc: Document) {
     def getTdAtInt(values: Array[Int], n: Int): String = getTd(values(n).toString, true)
 
     def edgesToString(to: Int): String = {
-      val edges = sentence.dependencies.get.incomingEdges(to)
+      val edges = sentence.dependencies.map(_.incomingEdges(to)).getOrElse(Array.empty)
 
       edges.map(edge => sentence.words(edge._1) + "\u291c" + edge._2 + "\u2192" + sentence.words(to)).mkString(", ")
     }
@@ -72,8 +72,9 @@ class ParseObj(doc: Document) {
 
     doc.sentences.indices.foreach{ i =>
       val sentence = doc.sentences(i)
+      val dependenciesHash = sentence.dependencies.map(_.equivalenceHash.toString).getOrElse("N/A")
 
-      sb.append(s"<tr><td colspan='11' align='center'>Sentence ${i + 1}, sentence.equivalenceHash = ${sentence.equivalenceHash}, dependencies.equivalenceHash = ${sentence.dependencies.get.equivalenceHash}</td></tr>")
+      sb.append(s"<tr><td colspan='11' align='center'>Sentence ${i + 1}, sentence.equivalenceHash = ${sentence.equivalenceHash}, dependencies.equivalenceHash = $dependenciesHash</td></tr>")
       mkParseObj(sentence, sb)
     }
     sb.append(trailer)

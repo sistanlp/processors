@@ -88,7 +88,7 @@ class BalaurProcessor protected (
   }
 
   override def tagPartsOfSpeech(doc: Document): Unit = {
-    throw new RuntimeException("ERROR: cannot call this method on its own in this procecessor!")
+    throw new RuntimeException("ERROR: cannot call this method on its own in this processor!")
   }
 
   /** Lematization; modifies the document in place */
